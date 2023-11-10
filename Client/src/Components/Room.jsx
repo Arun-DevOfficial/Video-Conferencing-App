@@ -52,10 +52,12 @@ const Room = () => {
 
   const handleCallAccepted = useCallback(
     ({ from, ans }) => {
-      Peer.setLocalDescription(ans);
-      console.log("Call Accepted");
-      for (const track of mystream.getTracks()) {
-        Peer.peer.addTrack(track, mystream);
+      if (ans) {
+        Peer.setLocalDescription(ans);
+        console.log("Call Accepted..");
+        for (const track of mystream.getTrack()) {
+          Peer.peer.addTrack(track, mystream);
+        }
       }
     },
     [mystream]
@@ -81,42 +83,51 @@ const Room = () => {
 
   return (
     <>
-      <section>
-        <div>
-          <h1>Room page</h1>
-          <h1>{RemoteSocketId ? "Connected" : "No one in room"}</h1>
-          {RemoteSocketId && (
-            <button
-              onClick={handleCallUser}
-              className="bg-green-500 w-20 px-4 py-2 rounded-lg text-md font-medium text-white"
-            >
-              Call
-            </button>
-          )}
-          {mystream && (
-            <>
-              <h1>In Call Progress</h1>
-              <ReactPlayer
-                url={mystream}
-                height="300px"
-                width="300px"
-                playing
-                muted
-              />
-            </>
-          )}
-          {remoteStream && (
-            <>
-              <h1>In Call Progress</h1>
-              <ReactPlayer
-                url={remoteStream}
-                height="300px"
-                width="300px"
-                playing
-                muted
-              />
-            </>
-          )}
+      <section className="bg-gradient-to-r from-[#cdf5fd] to-[#fff] h-screen p-5">
+        <div className="w-3/4 mx-auto flex justify-center items-center">
+          <div>
+            {mystream && (
+              <>
+                <h1>In Call Progress</h1>
+                <ReactPlayer
+                  url={mystream}
+                  width="1000px"
+                  height="570px"
+                  playing
+                  muted
+                  controls="true"
+                  className="w-full h-auto"
+                />
+              </>
+            )}
+            {remoteStream && (
+              <>
+                <h1>In Call Progress</h1>
+                <ReactPlayer
+                  url={remoteStream}
+                  width="720px"
+                  playing
+                  muted
+                  controls={true}
+                  className="w-full h-auto"
+                />
+              </>
+            )}
+          </div>
+          <div>
+            <h1 className="font-bold text-4xl">Meeting Room</h1>
+            <h1 className="font-light text-md">
+              {RemoteSocketId ? "Connected" : "No one in room"}
+            </h1>
+            {RemoteSocketId && (
+              <button
+                onClick={handleCallUser}
+                className="mt-4 bg-sky-500 w-20 px-4 py-2 rounded-lg text-md font-medium text-white"
+              >
+                Call
+              </button>
+            )}
+          </div>
         </div>
       </section>
     </>
