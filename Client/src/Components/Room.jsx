@@ -2,12 +2,14 @@ import React, { useEffect, useCallback, useState } from "react";
 import { useSocket } from "../Context/SocketProvider";
 import ReactPlayer from "react-player";
 import Peer from "../Service/peer";
+import { useNavigate } from "react-router-dom";
 
 const Room = () => {
   const socket = useSocket();
   const [RemoteSocketId, setRemoteSocketId] = useState(null);
   const [mystream, setmyStream] = useState();
   const [remoteStream, setRemoteStream] = useState();
+  const navigate = useNavigate();
 
   const handleUserJoined = useCallback(({ email, id }) => {
     console.log(`${email} Joined Room`);
@@ -84,32 +86,34 @@ const Room = () => {
   return (
     <>
       <section className="bg-gradient-to-r from-[#cdf5fd] to-[#fff] h-screen p-5">
-        <div className="w-3/4 mx-auto flex justify-center items-center">
+        <div className="w-3/4 mx-auto flex justify-center items-start mt-40 gap-x-12">
           <div>
             {mystream && (
               <>
-                <h1>In Call Progress</h1>
                 <ReactPlayer
                   url={mystream}
                   width="1000px"
                   height="570px"
                   playing
                   muted
-                  controls="true"
-                  className="w-full h-auto"
+                  // controls="true"
+                  className="w-full h-auto rounded-lg"
                 />
+                <h1 className="font-semibold text-md text-2xl">
+                  In Call Progress
+                </h1>
               </>
             )}
             {remoteStream && (
               <>
-                <h1>In Call Progress</h1>
+                <h1 className="font-semibold text-md">In Call Progress</h1>
                 <ReactPlayer
                   url={remoteStream}
                   width="720px"
                   playing
                   muted
-                  controls={true}
-                  className="w-full h-auto"
+                  // controls={true}
+                  className="w-full h-auto rounded-lg"
                 />
               </>
             )}
@@ -120,12 +124,20 @@ const Room = () => {
               {RemoteSocketId ? "Connected" : "No one in room"}
             </h1>
             {RemoteSocketId && (
-              <button
-                onClick={handleCallUser}
-                className="mt-4 bg-sky-500 w-20 px-4 py-2 rounded-lg text-md font-medium text-white"
-              >
-                Call
-              </button>
+              <>
+                <button
+                  onClick={handleCallUser}
+                  className="mt-4 bg-sky-500 w-20 px-4 py-2 rounded-lg text-md font-medium text-white"
+                >
+                  Call
+                </button>
+                <button
+                  onClick={() => navigate("/")}
+                  className="ml-4 mt-4 bg-red-500 w-20 px-4 py-2 rounded-lg text-md font-medium text-white"
+                >
+                  Reject
+                </button>
+              </>
             )}
           </div>
         </div>
