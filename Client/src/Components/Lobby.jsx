@@ -1,19 +1,28 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useSocket } from "../Context/SocketProvider";
+import { useNavigate } from "react-router-dom";
 
 function Lobby() {
   const [room, setRoom] = useState(""); // Use useState with initial values
   const [email, setEmail] = useState("");
-
+  const navigate = useNavigate();
   const socket = useSocket();
   const roomRef = useRef(); // Use roomRef instead of roomidRef
   const emailRef = useRef(); // Use emailRef instead of passwordRef
   const [errors, setErrors] = useState({});
 
+  //Handling Join to room
+  const handleJoinRoom = useCallback((data) => {
+    const { email, room } = data;
+    navigate(`/room/${room}`);
+  }, [navigate]);
+
   useEffect(() => {
     roomRef.current.focus();
-  }, []);
+    socket.on("room:join", handleJoinRoom);
+  }, [socket]);
 
+  //Form Validation
   const validation = () => {
     let newErrors = {};
 
@@ -36,7 +45,7 @@ function Lobby() {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-
+  //Handle FormSubmission
   const handleSubmit = useCallback(
     async (e) => {
       e.preventDefault();
@@ -92,7 +101,7 @@ function Lobby() {
               Email
             </label>
             <input
-              type="email" 
+              type="email"
               id="Email"
               placeholder="Email"
               value={email}
